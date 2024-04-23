@@ -1,6 +1,9 @@
 // Got this piece of code from 
 // https://github.com/deviceplug/btleplug/blob/master/examples/subscribe_notify_characteristic.rs
 
+// See the "macOS permissions note" in README.md before running this on macOS
+// Big Sur or later.
+
 use btleplug::api::{Central, CharPropFlags, Manager as _, Peripheral, ScanFilter};
 use btleplug::platform::Manager;
 use futures::stream::StreamExt;
@@ -10,14 +13,18 @@ use tokio::time;
 use uuid::Uuid;
 
 /// Only devices whose name contains this string will be tried.
-const PERIPHERAL_NAME_MATCH_FILTER: &str = "OnePlus Bullets Wireless Z2";
+const PERIPHERAL_NAME_MATCH_FILTER: &str = "OnePlus";
 /// UUID of the characteristic for which we should subscribe to notifications.
 const NOTIFY_CHARACTERISTIC_UUID: Uuid = Uuid::from_u128(0x6e400002_b534_f393_67a9_e50e24dccA9e);
+
+async fn create_manager() -> Result<Manager, btleplug::Error> {
+    return Manager::new().await;
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
 
-    let manager = Manager::new().await?;
+    let manager = create_manager().await?;
     let adapter_list = manager.adapters().await?;
     if adapter_list.is_empty() {
         eprintln!("No Bluetooth adapters found");
@@ -39,7 +46,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
             for peripheral in peripherals.iter() {
                 let properties = peripheral.properties().await?;
                 let is_connected = peripheral.is_connected().await?;
-
                 let local_name = properties
                     .unwrap()
                     .local_name
