@@ -5,6 +5,7 @@ use btleplug::api::ScanFilter;
 use btleplug::platform::Manager;
 use btleplug::{api::Manager as _, Result};
 use futures::StreamExt;
+use log::debug;
 
 pub async fn start_bluetooth_stream(event_sub: &mut dyn EventSubscriber) -> Result<()> {
     let manager = Manager::new().await?;

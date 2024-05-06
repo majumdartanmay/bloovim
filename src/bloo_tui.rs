@@ -4,12 +4,13 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
+use log::debug;
 use ratatui::widgets::*;
 
 use ratatui::prelude::*;
 use std::io::{stdout, Result};
 
-pub struct TuiController {
+pub struct BlooTui {
     terminal: Terminal<CrosstermBackend<std::io::Stdout>>,
     devices: Vec<PeripheralId>,
 }
@@ -19,15 +20,17 @@ pub trait EventSubscriber {
     fn add_device(&mut self, device: PeripheralId);
 }
 
-impl TuiController {
-    pub fn new() -> Result<TuiController> {
-        Ok(TuiController {
+impl BlooTui {
+    pub fn new() -> Result<BlooTui> {
+        Ok(BlooTui {
             terminal: Terminal::new(CrosstermBackend::new(stdout()))?,
             devices: Vec::default(),
         })
     }
 
     pub fn start_tui(&mut self) -> Result<()> {
+        debug!("Creating crossterm instance 1");
+
         stdout().execute(EnterAlternateScreen)?;
         enable_raw_mode()?;
 
@@ -79,7 +82,7 @@ impl TuiController {
     }
 }
 
-impl EventSubscriber for TuiController {
+impl EventSubscriber for BlooTui {
     fn scan_started(&self) {
         println!("Scan started");
     }
