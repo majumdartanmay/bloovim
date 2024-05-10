@@ -28,7 +28,7 @@ impl BlooTui {
         })
     }
 
-    pub fn start_tui(&mut self) -> Result<()> {
+    pub async fn start_tui(&mut self) -> Result<()> {
         debug!("Creating crossterm instance 1");
 
         stdout().execute(EnterAlternateScreen)?;
