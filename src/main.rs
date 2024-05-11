@@ -9,8 +9,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     setup()?;
     //
     let mut tui_controller = BlooTui::new()?;
-    tui_controller.start_tui().await?;
-    bloo_controller::start_bluetooth_stream(&mut tui_controller).await?;
+    let f2 = tui_controller.start_tui();
+    let f1 = bloo_controller::start_bluetooth_stream();
+
+    let _ = tokio::join!(f1, f2);
 
     tui_controller.stop_tui()?;
     return Ok(());

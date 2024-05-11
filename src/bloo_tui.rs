@@ -4,6 +4,7 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
+use futures::channel::oneshot::{self};
 use log::debug;
 use ratatui::widgets::*;
 
@@ -35,7 +36,7 @@ impl BlooTui {
         enable_raw_mode()?;
 
         self.terminal.clear()?;
-        self.start_event_loop()?;
+        self.start_event_loop().await?;
 
         Ok(())
     }
@@ -63,7 +64,7 @@ impl BlooTui {
         _frame.render_widget(list, _frame.size());
     }
 
-    fn start_event_loop(&mut self) -> Result<()> {
+    async fn start_event_loop(&mut self) -> Result<()> {
         loop {
             // draw UI
             self.terminal.draw(|frame: &mut Frame| {
@@ -76,6 +77,12 @@ impl BlooTui {
                         break;
                     }
                 }
+            }
+
+            let (_, mut rx) = oneshot::channel();
+            while let Ok(Some(device)) = rx.try_recv() {
+                debug!("Adding device {:?}", device);
+                self.devices.append(device);
             }
         }
         Ok(())
