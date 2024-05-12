@@ -1,4 +1,7 @@
-2024-05-11T23:39:21.379741425+05:30 - Creating bloo session
-2024-05-11T23:39:21.381513867+05:30 - Creating crossterm instance 1
-2024-05-11T23:39:32.468010324+05:30 - Started scan
-2024-05-11T23:39:32.471832315+05:30 - Sender packet has been dropped
+2024-05-12T23:43:20.233064699+05:30 - Creating bloo session
+2024-05-12T23:43:20.234195999+05:30 - Entered bluetooth scan zone
+2024-05-12T23:43:20.234703753+05:30 - Creating crossterm instance 1
+2024-05-12T23:43:20.235174217+05:30 - Creating device vector. State 1
+2024-05-12T23:43:20.235198447+05:30 - Attempting to start event loop
+2024-05-12T23:43:20.235212871+05:30 - Attempting to create receiver listener
+2024-05-12T23:43:20.235241855+05:30 - Joining receiver listener and UI thread

@@ -1,43 +1,57 @@
 use btleplug::platform::PeripheralId;
+use std::sync::{Arc, Mutex};
+
 use crossterm::{
     event::{self, KeyCode, KeyEventKind},
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
-use futures::channel::oneshot::{self};
 use log::debug;
 use ratatui::widgets::*;
 
 use ratatui::prelude::*;
 use std::io::{stdout, Result};
+use tokio::sync::mpsc;
 
 pub struct BlooTui {
     terminal: Terminal<CrosstermBackend<std::io::Stdout>>,
-    devices: Vec<PeripheralId>,
-}
-
-pub trait EventSubscriber {
-    fn scan_started(&self);
-    fn add_device(&mut self, device: PeripheralId);
 }
 
 impl BlooTui {
     pub fn new() -> Result<BlooTui> {
         Ok(BlooTui {
             terminal: Terminal::new(CrosstermBackend::new(stdout()))?,
-            devices: Vec::default(),
         })
     }
 
-    pub async fn start_tui(&mut self) -> Result<()> {
+    pub async fn start_tui(
+        &mut self,
+        rx: Arc<Mutex<mpsc::Receiver<PeripheralId>>>,
+        devices_arc: Arc<Mutex<Vec<PeripheralId>>>,
+    ) -> Result<()> {
         debug!("Creating crossterm instance 1");
 
         stdout().execute(EnterAlternateScreen)?;
         enable_raw_mode()?;
 
         self.terminal.clear()?;
-        self.start_event_loop().await?;
 
+        debug!("Creating device vector. State 1");
+        let mut device_raw1: Vec<PeripheralId> = devices_arc.lock().unwrap().to_vec();
+
+        debug!("Attempting to start event loop");
+        let f1 = self.start_event_loop(&mut device_raw1);
+
+        debug!("Attempting to create receiver listener");
+        let f2 = tokio::spawn(async move {
+            while let Some(data) = rx.lock().unwrap().blocking_recv() {
+                debug!("Received some perpheral packets");
+                devices_arc.lock().unwrap().to_vec().push(data);
+            }
+        });
+
+        debug!("Joining receiver listener and UI thread");
+        let _ = tokio::join!(f1, f2);
         Ok(())
     }
 
@@ -64,11 +78,11 @@ impl BlooTui {
         _frame.render_widget(list, _frame.size());
     }
 
-    async fn start_event_loop(&mut self) -> Result<()> {
+    async fn start_event_loop(&mut self, devices: &mut Vec<PeripheralId>) -> Result<()> {
         loop {
             // draw UI
             self.terminal.draw(|frame: &mut Frame| {
-                Self::render_list(frame, &mut self.devices);
+                Self::render_list(frame, devices);
             })?;
 
             if event::poll(std::time::Duration::from_millis(16))? {
@@ -78,23 +92,7 @@ impl BlooTui {
                     }
                 }
             }
-
-            let (_, mut rx) = oneshot::channel();
-            while let Ok(Some(device)) = rx.try_recv() {
-                debug!("Adding device {:?}", device);
-                self.devices.append(device);
-            }
         }
         Ok(())
-    }
-}
-
-impl EventSubscriber for BlooTui {
-    fn scan_started(&self) {
-        println!("Scan started");
-    }
-
-    fn add_device(&mut self, id: PeripheralId) {
-        self.devices.push(id);
     }
 }
