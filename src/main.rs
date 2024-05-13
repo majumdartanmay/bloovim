@@ -9,19 +9,29 @@ use tokio::sync::mpsc;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (tx, rx) = mpsc::channel(32);
+    let (tx, mut rx) = mpsc::channel(32);
 
     let devices: Arc<Mutex<Vec<PeripheralId>>> = Arc::new(Mutex::new(Vec::default()));
 
     setup()?;
     //
     let mut tui_controller = BlooTui::new()?;
-    let f2 = tui_controller.start_tui(Arc::new(Mutex::new(rx)), devices);
-    let f1 = bloo_controller::start_bluetooth_stream(&tx);
+    // let f2 = tui_controller.start_tui(Arc::new(Mutex::new(rx)), devices);
+    // let f1 = bloo_controller::start_bluetooth_stream(&tx);
+    //
+    // let _ = tokio::join!(f1, f2);
+    //
+    // tui_controller.stop_tui()?;
 
-    let _ = tokio::join!(f1, f2);
+    let f2 = bloo_controller::start_bluetooth_stream(&tx);
+    std::thread::spawn(move || {
+        while let Some(data) = rx.blocking_recv() {
+            debug!("Receivied {:?}", data);
+        }
+    });
 
-    tui_controller.stop_tui()?;
+    let _ = tokio::join!(f2);
+
     return Ok(());
 }
 

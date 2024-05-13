@@ -14,15 +14,23 @@ pub async fn start_bluetooth_stream(sender: &Sender<PeripheralId>) -> Result<()>
     debug!("Entered bluetooth scan zone");
 
     let manager = Manager::new().await?;
-    let adapters = manager.adapters().await?;
-    let central = adapters.first().unwrap();
+    debug!("Created bluetooth manager");
 
-    debug!("Started scan");
+    let adapters = manager.adapters().await?;
+    debug!("Created bluetooth adapter");
+
+    let central = adapters.first().unwrap();
+    debug!("Attempting to start scan");
+
     central.start_scan(ScanFilter::default()).await?;
+    debug!("Scan started");
 
     let mut events = central.events().await?;
     while let Some(event) = events.next().await {
-        debug!("Some bluetooth event has occured {:?}", event);
+        debug!(
+            "Some bluetooth event has occured. Event information{:?} ",
+            event
+        );
         if let CentralEvent::DeviceDiscovered(id) = event {
             match sender.send(id).await {
                 Ok(_) => {

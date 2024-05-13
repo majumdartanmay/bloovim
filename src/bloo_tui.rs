@@ -29,7 +29,7 @@ impl BlooTui {
         rx: Arc<Mutex<mpsc::Receiver<PeripheralId>>>,
         devices_arc: Arc<Mutex<Vec<PeripheralId>>>,
     ) -> Result<()> {
-        debug!("Creating crossterm instance 1");
+        debug!("Creating crossterm instance 1....");
 
         stdout().execute(EnterAlternateScreen)?;
         enable_raw_mode()?;
@@ -40,18 +40,34 @@ impl BlooTui {
         let mut device_raw1: Vec<PeripheralId> = devices_arc.lock().unwrap().to_vec();
 
         debug!("Attempting to start event loop");
-        let f1 = self.start_event_loop(&mut device_raw1);
+        // let f1 = self.start_event_loop(&mut device_raw1);
 
         debug!("Attempting to create receiver listener");
-        let f2 = tokio::spawn(async move {
-            while let Some(data) = rx.lock().unwrap().blocking_recv() {
-                debug!("Received some perpheral packets");
-                devices_arc.lock().unwrap().to_vec().push(data);
+        // let f2 = tokio::spawn(async move {
+        //     while let Some(data) = rx.lock().unwrap().blocking_recv() {
+        //         debug!("Received some perpheral packets");
+        //         let mut devices = devices_arc.lock().unwrap().to_vec();
+        //         devices.push(data);
+        //     }
+        // });
+        //
+        let f2 = std::thread::spawn(move || {
+            // while let Some(data) = rx.lock().unwrap().blocking_recv() {}
+
+            loop {
+                if let Some(data) = rx.lock().unwrap().blocking_recv() {
+                    debug!("received some perpheral packets");
+                    let mut devices = devices_arc.lock().unwrap().to_vec();
+                    devices.push(data);
+                }
             }
         });
 
         debug!("Joining receiver listener and UI thread");
-        let _ = tokio::join!(f1, f2);
+        // let _ = tokio::join!(f1, f2);
+        // let _ = tokio::join!(f2);
+        f2.join().expect("Receiver thread panicked");
+        debug!("Closing receiver listener and UI thread");
         Ok(())
     }
 
@@ -81,9 +97,9 @@ impl BlooTui {
     async fn start_event_loop(&mut self, devices: &mut Vec<PeripheralId>) -> Result<()> {
         loop {
             // draw UI
-            self.terminal.draw(|frame: &mut Frame| {
-                Self::render_list(frame, devices);
-            })?;
+            // self.terminal.draw(|frame: &mut Frame| {
+            //     Self::render_list(frame, devices);
+            // })?;
 
             if event::poll(std::time::Duration::from_millis(16))? {
                 if let event::Event::Key(key) = event::read()? {
