@@ -1,52 +1,10 @@
-2024-05-13T23:54:37.578394460+05:30 - Creating bloo session
-2024-05-13T23:54:37.579730461+05:30 - Entered bluetooth scan zone
-2024-05-13T23:54:37.580291754+05:30 - Created bluetooth manager
-2024-05-13T23:54:37.582155515+05:30 - Created bluetooth adapter
-2024-05-13T23:54:37.582242211+05:30 - Attempting to start scan
-2024-05-13T23:54:37.582911626+05:30 - Scan started
-2024-05-13T23:54:37.585189194+05:30 - Some bluetooth event has occured. Event informationDeviceDiscovered(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_56_AC_AF_E7_01_52\0") })) 
-2024-05-13T23:54:37.585265962+05:30 - Device detected. Packet sent
-2024-05-13T23:54:37.585302288+05:30 - Some bluetooth event has occured. Event informationDeviceDiscovered(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_7F_EA_89_D0_18_46\0") })) 
-2024-05-13T23:54:37.585330266+05:30 - Device detected. Packet sent
-2024-05-13T23:54:37.585360965+05:30 - Some bluetooth event has occured. Event informationDeviceDiscovered(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_BB_9A_28_21_BD_E8\0") })) 
-2024-05-13T23:54:37.585392391+05:30 - Device detected. Packet sent
-2024-05-13T23:54:37.585410303+05:30 - Receivied PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_56_AC_AF_E7_01_52\0") })
-2024-05-13T23:54:37.585546118+05:30 - Some bluetooth event has occured. Event informationDeviceDiscovered(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_1C_75_6A_A9_0F_09\0") })) 
-2024-05-13T23:54:37.585590626+05:30 - Receivied PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_7F_EA_89_D0_18_46\0") })
-2024-05-13T23:54:37.585619008+05:30 - Device detected. Packet sent
-2024-05-13T23:54:37.585648817+05:30 - Receivied PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_BB_9A_28_21_BD_E8\0") })
-2024-05-13T23:54:37.585666259+05:30 - Some bluetooth event has occured. Event informationDeviceDiscovered(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_49_F2_97_79_C9_04\0") })) 
-2024-05-13T23:54:37.585695640+05:30 - Receivied PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_1C_75_6A_A9_0F_09\0") })
-2024-05-13T23:54:37.585718817+05:30 - Device detected. Packet sent
-2024-05-13T23:54:37.585744122+05:30 - Receivied PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_49_F2_97_79_C9_04\0") })
-2024-05-13T23:54:37.585759224+05:30 - Some bluetooth event has occured. Event informationDeviceDiscovered(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_6B_90_16_9B_80_F0\0") })) 
-2024-05-13T23:54:37.585794396+05:30 - Device detected. Packet sent
-2024-05-13T23:54:37.585816612+05:30 - Receivied PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_6B_90_16_9B_80_F0\0") })
-2024-05-13T23:54:37.585831962+05:30 - Some bluetooth event has occured. Event informationDeviceDiscovered(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_8C_64_A2_7F_95_C3\0") })) 
-2024-05-13T23:54:37.585865129+05:30 - Device detected. Packet sent
-2024-05-13T23:54:37.585886976+05:30 - Receivied PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_8C_64_A2_7F_95_C3\0") })
-2024-05-13T23:54:37.585901418+05:30 - Some bluetooth event has occured. Event informationDeviceDiscovered(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_60_1D_9D_9E_48_A4\0") })) 
-2024-05-13T23:54:37.585935293+05:30 - Device detected. Packet sent
-2024-05-13T23:54:37.585957281+05:30 - Receivied PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_60_1D_9D_9E_48_A4\0") })
-2024-05-13T23:54:38.239049646+05:30 - Some bluetooth event has occured. Event informationDeviceUpdated(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_7F_EA_89_D0_18_46\0") })) 
-2024-05-13T23:54:38.239417393+05:30 - Some bluetooth event has occured. Event informationServiceDataAdvertisement { id: PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_7F_EA_89_D0_18_46\0") }), service_data: {0000fef3-0000-1000-8000-00805f9b34fb: [74, 23, 35, 54, 82, 90, 77, 17, 50, 200, 43, 151, 102, 235, 156, 189, 3, 109, 155, 225, 173, 121, 199, 203, 142, 81, 28]} } 
-2024-05-13T23:54:42.813051779+05:30 - Some bluetooth event has occured. Event informationDeviceUpdated(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_56_AC_AF_E7_01_52\0") })) 
-2024-05-13T23:54:42.813579140+05:30 - Some bluetooth event has occured. Event informationManufacturerDataAdvertisement { id: PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_56_AC_AF_E7_01_52\0") }), manufacturer_data: {76: [16, 6, 111, 30, 26, 41, 214, 138]} } 
-2024-05-13T23:54:46.264318931+05:30 - Some bluetooth event has occured. Event informationDeviceDiscovered(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_7A_03_89_12_9C_2E\0") })) 
-2024-05-13T23:54:46.264388260+05:30 - Device detected. Packet sent
-2024-05-13T23:54:46.264399044+05:30 - Receivied PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_7A_03_89_12_9C_2E\0") })
-2024-05-13T23:54:46.264844185+05:30 - Some bluetooth event has occured. Event informationDeviceUpdated(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_6B_90_16_9B_80_F0\0") })) 
-2024-05-13T23:54:46.265133758+05:30 - Some bluetooth event has occured. Event informationManufacturerDataAdvertisement { id: PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_6B_90_16_9B_80_F0\0") }), manufacturer_data: {76: [22, 8, 0, 83, 130, 174, 132, 88, 41, 248]} } 
-2024-05-13T23:54:47.123944339+05:30 - Some bluetooth event has occured. Event informationDeviceUpdated(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_1C_75_6A_A9_0F_09\0") })) 
-2024-05-13T23:54:47.124331995+05:30 - Some bluetooth event has occured. Event informationManufacturerDataAdvertisement { id: PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_1C_75_6A_A9_0F_09\0") }), manufacturer_data: {6: [1, 9, 33, 42, 226, 54, 169, 122, 213, 56, 76, 65, 80, 84, 79, 80, 45, 56, 67, 74, 71, 86, 79, 50, 53]} } 
-2024-05-13T23:54:47.423753775+05:30 - Some bluetooth event has occured. Event informationDeviceUpdated(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_7F_EA_89_D0_18_46\0") })) 
-2024-05-13T23:54:47.424263050+05:30 - Some bluetooth event has occured. Event informationDeviceUpdated(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_49_F2_97_79_C9_04\0") })) 
-2024-05-13T23:54:47.424668102+05:30 - Some bluetooth event has occured. Event informationServiceDataAdvertisement { id: PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_49_F2_97_79_C9_04\0") }), service_data: {0000fef3-0000-1000-8000-00805f9b34fb: [74, 23, 35, 65, 56, 65, 48, 17, 50, 220, 229, 136, 136, 169, 193, 51, 2, 109, 34, 125, 226, 162, 146, 68, 46, 204, 118]} } 
-2024-05-13T23:54:47.652784726+05:30 - Some bluetooth event has occured. Event informationDeviceUpdated(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_60_1D_9D_9E_48_A4\0") })) 
-2024-05-13T23:54:47.653288085+05:30 - Some bluetooth event has occured. Event informationManufacturerDataAdvertisement { id: PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_60_1D_9D_9E_48_A4\0") }), manufacturer_data: {911: [10, 16, 66, 12, 1, 96, 29, 157, 158, 72, 163, 236]} } 
-2024-05-13T23:54:47.653699306+05:30 - Some bluetooth event has occured. Event informationDeviceUpdated(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_7F_EA_89_D0_18_46\0") })) 
-2024-05-13T23:54:47.653979035+05:30 - Some bluetooth event has occured. Event informationServiceDataAdvertisement { id: PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_7F_EA_89_D0_18_46\0") }), service_data: {0000fef3-0000-1000-8000-00805f9b34fb: [74, 23, 35, 54, 82, 90, 77, 17, 50, 200, 43, 151, 102, 235, 156, 189, 3, 109, 155, 225, 173, 121, 199, 203, 142, 81, 28]} } 
-2024-05-13T23:54:49.335874475+05:30 - Some bluetooth event has occured. Event informationDeviceUpdated(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_56_AC_AF_E7_01_52\0") })) 
-2024-05-13T23:54:49.336330180+05:30 - Some bluetooth event has occured. Event informationManufacturerDataAdvertisement { id: PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_56_AC_AF_E7_01_52\0") }), manufacturer_data: {76: [16, 6, 111, 30, 26, 41, 214, 138]} } 
-2024-05-13T23:54:50.195888937+05:30 - Some bluetooth event has occured. Event informationDeviceUpdated(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_6B_90_16_9B_80_F0\0") })) 
-2024-05-13T23:54:50.196520184+05:30 - Some bluetooth event has occured. Event informationManufacturerDataAdvertisement { id: PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_6B_90_16_9B_80_F0\0") }), manufacturer_data: {76: [22, 8, 0, 83, 130, 174, 132, 88, 41, 248]} } 
+2024-05-14T21:51:11.491392346+05:30 - Creating bloo session
+2024-05-14T21:51:11.492471281+05:30 - Creating crossterm instance 1....
+2024-05-14T21:51:11.496216271+05:30 - Entered bluetooth scan zone
+2024-05-14T21:51:11.496717747+05:30 - Created bluetooth manager
+2024-05-14T21:51:11.497536517+05:30 - Created bluetooth adapter
+2024-05-14T21:51:11.497563686+05:30 - Attempting to start scan
+2024-05-14T21:51:11.498695994+05:30 - Scan started
+2024-05-14T21:51:11.499637129+05:30 - Some bluetooth event has occured. Event informationDeviceDiscovered(PeripheralId(DeviceId { object_path: Path("/org/bluez/hci0/dev_8C_64_A2_7F_95_C3\0") })) 
+2024-05-14T21:51:11.499675853+05:30 - Device detected. Packet sent
+2024-05-14T21:51:11.499707811+05:30 - Value received

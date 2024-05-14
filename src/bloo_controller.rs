@@ -1,16 +1,19 @@
 use log::error;
 use tokio::sync::mpsc::Sender;
 
+use crate::BState;
 use btleplug::api::Central;
 use btleplug::api::CentralEvent;
-use btleplug::api::ScanFilter;
 use btleplug::platform::Manager;
 use btleplug::platform::PeripheralId;
 use btleplug::{api::Manager as _, Result};
 use futures::StreamExt;
 use log::debug;
 
-pub async fn start_bluetooth_stream(sender: &Sender<PeripheralId>) -> Result<()> {
+pub async fn start_bluetooth_stream<'a>(
+    sender: &Sender<PeripheralId>,
+    b_state: &'a BState,
+) -> Result<()> {
     debug!("Entered bluetooth scan zone");
 
     let manager = Manager::new().await?;
@@ -22,7 +25,6 @@ pub async fn start_bluetooth_stream(sender: &Sender<PeripheralId>) -> Result<()>
     let central = adapters.first().unwrap();
     debug!("Attempting to start scan");
 
-    central.start_scan(ScanFilter::default()).await?;
     debug!("Scan started");
 
     let mut events = central.events().await?;

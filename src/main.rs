@@ -1,36 +1,28 @@
+mod b_state;
 mod bloo_controller;
 mod bloo_tui;
 
+use b_state::BState;
+use bloo_controller::start_bluetooth_stream;
 use bloo_tui::BlooTui;
 use btleplug::platform::PeripheralId;
 use log::debug;
-use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (tx, mut rx) = mpsc::channel(32);
-
-    let devices: Arc<Mutex<Vec<PeripheralId>>> = Arc::new(Mutex::new(Vec::default()));
-
     setup()?;
-    //
+    let (tx, mut rx) = mpsc::channel(32);
+    let b_state: BState = BState { central: None };
+
     let mut tui_controller = BlooTui::new()?;
-    // let f2 = tui_controller.start_tui(Arc::new(Mutex::new(rx)), devices);
-    // let f1 = bloo_controller::start_bluetooth_stream(&tx);
-    //
-    // let _ = tokio::join!(f1, f2);
-    //
-    // tui_controller.stop_tui()?;
+    let mut devices: Vec<PeripheralId> = Vec::default();
+    let f1 = tui_controller.start_tui(&mut rx, &mut devices);
+    let f2 = start_bluetooth_stream(&tx);
 
-    let f2 = bloo_controller::start_bluetooth_stream(&tx);
-    std::thread::spawn(move || {
-        while let Some(data) = rx.blocking_recv() {
-            debug!("Receivied {:?}", data);
-        }
-    });
+    let _ = tokio::join!(f1, f2);
 
-    let _ = tokio::join!(f2);
+    tui_controller.stop_tui()?;
 
     return Ok(());
 }
