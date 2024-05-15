@@ -13,12 +13,12 @@ use tokio::sync::mpsc;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     setup()?;
     let (tx, mut rx) = mpsc::channel(32);
-    let b_state: BState = BState { central: None };
+    let mut b_state: BState = BState { central: None };
 
     let mut tui_controller = BlooTui::new()?;
     let mut devices: Vec<PeripheralId> = Vec::default();
     let f1 = tui_controller.start_tui(&mut rx, &mut devices);
-    let f2 = start_bluetooth_stream(&tx);
+    let f2 = start_bluetooth_stream(&tx, &mut b_state);
 
     let _ = tokio::join!(f1, f2);
 

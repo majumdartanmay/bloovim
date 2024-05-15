@@ -1,5 +1,5 @@
 use btleplug::platform::Adapter;
 
-pub struct BState<'a> {
-    pub central: Option<&'a Adapter>,
+pub struct BState {
+    pub central: Option<Adapter>,
 }

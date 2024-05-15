@@ -12,7 +12,7 @@ use log::debug;
 
 pub async fn start_bluetooth_stream<'a>(
     sender: &Sender<PeripheralId>,
-    b_state: &'a BState,
+    b_state: &'a mut BState,
 ) -> Result<()> {
     debug!("Entered bluetooth scan zone");
 
@@ -22,12 +22,15 @@ pub async fn start_bluetooth_stream<'a>(
     let adapters = manager.adapters().await?;
     debug!("Created bluetooth adapter");
 
-    let central = adapters.first().unwrap();
+    b_state.central = adapters.first().cloned();
     debug!("Attempting to start scan");
 
     debug!("Scan started");
 
-    let mut events = central.events().await?;
+    let central = b_state.central.as_mut();
+    let mut events = Option::expect(central, "Did not found btleplug adapter")
+        .events()
+        .await?;
     while let Some(event) = events.next().await {
         debug!(
             "Some bluetooth event has occured. Event information{:?} ",
