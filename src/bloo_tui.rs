@@ -1,3 +1,5 @@
+use crate::BState;
+use btleplug::api::Central;
 use btleplug::platform::PeripheralId;
 
 use crossterm::{
@@ -5,6 +7,7 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
+use futures::{FutureExt, StreamExt};
 use log::debug;
 use ratatui::widgets::*;
 
@@ -27,6 +30,7 @@ impl BlooTui {
         &mut self,
         rx: &mut mpsc::Receiver<PeripheralId>,
         devices_arc: &mut Vec<PeripheralId>,
+        b_state: &BState,
     ) -> Result<()> {
         debug!("Creating crossterm instance 1....");
 
@@ -35,12 +39,15 @@ impl BlooTui {
 
         self.terminal.clear()?;
 
-        self.start_event_loop(devices_arc, rx).await?;
+        self.start_event_loop(devices_arc, rx, b_state).await?;
+        self.stop_tui()?;
 
         Ok(())
     }
 
     pub fn stop_tui(&self) -> Result<()> {
+        debug!("Attempting to stop TUI");
+
         stdout().execute(LeaveAlternateScreen)?;
         disable_raw_mode()?;
         Ok(())
@@ -65,29 +72,41 @@ impl BlooTui {
 
     async fn start_event_loop(
         &mut self,
-        devices: &mut Vec<PeripheralId>,
+        devices: &[PeripheralId],
         rx: &mut mpsc::Receiver<PeripheralId>,
+        b_state: &BState,
     ) -> Result<()> {
         loop {
             // draw UI
             self.terminal.draw(|frame: &mut Frame| {
-                Self::render_list(frame, devices);
+                Self::render_list(frame, &mut devices.to_vec());
             })?;
 
-            if let Some(data) = rx.recv().await {
-                debug!("Value received");
-                devices.push(data);
-            }
-
-            if event::poll(std::time::Duration::from_millis(16))? {
-                if let event::Event::Key(key) = event::read()? {
-                    if key.kind == KeyEventKind::Press && key.code == KeyCode::Char('q') {
-                        debug!("Stopping event loop");
-                        break;
-                    }
+            if let Ok(data) = rx.try_recv() {
+                if let Ok(device_full_info) = b_state.central.as_ref().peripheral(&data).await {
+                    debug!("Full device info {:?}", device_full_info);
                 }
             }
+
+            let mut reader = event::EventStream::new();
+            let crossterm_event = reader.next().fuse();
+            if let Some(Ok(event::Event::Key(key))) = crossterm_event.await {
+                if key.kind == KeyEventKind::Press && key.code == KeyCode::Char('q') {
+                    debug!("Stopping event loop");
+                    break;
+                }
+            }
+
+            // if event::poll(std::time::Duration::from_millis(16))? {
+            //     if let event::Event::Key(key) = event::read()? {
+            //         if key.kind == KeyEventKind::Press && key.code == KeyCode::Char('q') {
+            //             debug!("Stopping event loop");
+            //             break;
+            //         }
+            //     }
+            // }
         }
+        debug!("Outside event loop");
         Ok(())
     }
 }
