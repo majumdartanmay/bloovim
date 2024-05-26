@@ -1,5 +1,5 @@
 use crate::BState;
-use btleplug::api::Central;
+use btleplug::api::{Central, Peripheral};
 use btleplug::platform::PeripheralId;
 
 use crossterm::{
@@ -7,7 +7,7 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
-use futures::{FutureExt, StreamExt};
+
 use log::debug;
 use ratatui::widgets::*;
 
@@ -29,7 +29,7 @@ impl BlooTui {
     pub async fn start_tui(
         &mut self,
         rx: &mut mpsc::Receiver<PeripheralId>,
-        devices_arc: &mut Vec<PeripheralId>,
+        devices_arc: &mut Vec<String>,
         b_state: &BState,
     ) -> Result<()> {
         debug!("Creating crossterm instance 1....");
@@ -53,7 +53,7 @@ impl BlooTui {
         Ok(())
     }
 
-    fn render_list(_frame: &mut Frame, devices: &mut [PeripheralId]) {
+    fn render_list(_frame: &mut Frame, devices: &mut [String]) {
         let items2 = devices
             .iter()
             .map(|x| x.to_string())
@@ -72,7 +72,7 @@ impl BlooTui {
 
     async fn start_event_loop(
         &mut self,
-        devices: &[PeripheralId],
+        devices: &mut Vec<String>,
         rx: &mut mpsc::Receiver<PeripheralId>,
         b_state: &BState,
     ) -> Result<()> {
@@ -85,26 +85,24 @@ impl BlooTui {
             if let Ok(data) = rx.try_recv() {
                 if let Ok(device_full_info) = b_state.central.as_ref().peripheral(&data).await {
                     debug!("Full device info {:?}", device_full_info);
+                    devices.push(
+                        device_full_info
+                            .properties()
+                            .await
+                            .unwrap()
+                            .unwrap()
+                            .local_name
+                            .unwrap(),
+                    );
                 }
             }
-
-            let mut reader = event::EventStream::new();
-            let crossterm_event = reader.next().fuse();
-            if let Some(Ok(event::Event::Key(key))) = crossterm_event.await {
-                if key.kind == KeyEventKind::Press && key.code == KeyCode::Char('q') {
-                    debug!("Stopping event loop");
-                    break;
+            if event::poll(std::time::Duration::from_millis(16))? {
+                if let event::Event::Key(key) = event::read()? {
+                    if key.kind == KeyEventKind::Press && key.code == KeyCode::Char('q') {
+                        break;
+                    }
                 }
             }
-
-            // if event::poll(std::time::Duration::from_millis(16))? {
-            //     if let event::Event::Key(key) = event::read()? {
-            //         if key.kind == KeyEventKind::Press && key.code == KeyCode::Char('q') {
-            //             debug!("Stopping event loop");
-            //             break;
-            //         }
-            //     }
-            // }
         }
         debug!("Outside event loop");
         Ok(())

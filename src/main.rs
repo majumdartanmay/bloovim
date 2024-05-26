@@ -5,7 +5,6 @@ mod bloo_tui;
 use b_state::BState;
 use bloo_controller::start_bluetooth_stream;
 use bloo_tui::BlooTui;
-use btleplug::platform::PeripheralId;
 use log::debug;
 use std::rc::Rc;
 use tokio::sync::mpsc;
@@ -18,7 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let b_state_rc = Rc::new(&mut b_state);
 
     let mut tui_controller = BlooTui::new()?;
-    let mut devices: Vec<PeripheralId> = Vec::default();
+    let mut devices: Vec<String> = Vec::default();
     let f1 = tui_controller.start_tui(&mut rx, &mut devices, b_state_rc.as_ref());
     let f2 = start_bluetooth_stream(&tx, b_state_rc.as_ref());
 
