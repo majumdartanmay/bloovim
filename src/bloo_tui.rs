@@ -1,13 +1,16 @@
 use crate::BState;
-use btleplug::api::{Central, Peripheral};
-use btleplug::platform::PeripheralId;
 
+use btleplug::api::Central;
+use btleplug::api::CentralEvent;
+use btleplug::api::Peripheral;
+use btleplug::platform::PeripheralId;
 use crossterm::{
     event::{self, KeyCode, KeyEventKind},
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
 
+use futures::StreamExt;
 use log::debug;
 use ratatui::widgets::*;
 
@@ -82,20 +85,43 @@ impl BlooTui {
                 Self::render_list(frame, &mut devices.to_vec());
             })?;
 
-            if let Ok(data) = rx.try_recv() {
-                if let Ok(device_full_info) = b_state.central.as_ref().peripheral(&data).await {
-                    debug!("Full device info {:?}", device_full_info);
-                    devices.push(
-                        device_full_info
-                            .properties()
-                            .await
-                            .unwrap()
-                            .unwrap()
-                            .local_name
-                            .unwrap(),
-                    );
+            // if let Ok(data) = rx.try_recv() {
+            //     if let Ok(device_full_info) = b_state.central.as_ref().peripheral(&data).await {
+            //         debug!("Full device info {:?}", device_full_info);
+            //         devices.push(
+            //             device_full_info
+            //                 .properties()
+            //                 .await
+            //                 .unwrap()
+            //                 .unwrap()
+            //                 .local_name
+            //                 .unwrap(),
+            //         );
+            //     }
+            // }
+            //
+            let mut events = b_state.central.events().await.unwrap();
+            if let Some(event) = events.next().await {
+                debug!(
+                    "Some bluetooth event has occured. Event information{:?} ",
+                    event
+                );
+                if let CentralEvent::DeviceDiscovered(id) = event {
+                    if let Ok(device_full_info) = b_state.central.as_ref().peripheral(&id).await {
+                        debug!("Full device info {:?}", device_full_info);
+                        devices.push(
+                            device_full_info
+                                .properties()
+                                .await
+                                .unwrap()
+                                .unwrap()
+                                .local_name
+                                .unwrap(),
+                        );
+                    }
                 }
             }
+
             if event::poll(std::time::Duration::from_millis(16))? {
                 if let event::Event::Key(key) = event::read()? {
                     if key.kind == KeyEventKind::Press && key.code == KeyCode::Char('q') {

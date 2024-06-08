@@ -21,7 +21,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let f1 = tui_controller.start_tui(&mut rx, &mut devices, b_state_rc.as_ref());
     let f2 = start_bluetooth_stream(&tx, b_state_rc.as_ref());
 
-    let _ = tokio::join!(f1, f2);
+    // let _ = (f1.await?, f2.await?);
+    tokio::select! {
+        _ = f1 => {
+            debug!("F1 is finished")
+        }
+        _ = f2 => {
+            debug!("F2 is finished")
+        }
+    }
     return Ok(());
 }
 
