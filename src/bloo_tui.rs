@@ -72,7 +72,7 @@ impl BlooTui {
             .highlight_style(Style::default().add_modifier(Modifier::ITALIC))
             .highlight_symbol(">>")
             .repeat_highlight_symbol(true)
-            .direction(ListDirection::BottomToTop);
+            .direction(ListDirection::TopToBottom);
 
         _frame.render_widget(list, _frame.size());
     }
@@ -89,21 +89,6 @@ impl BlooTui {
                 Self::render_list(frame, &mut devices.to_vec());
             })?;
 
-            // if let Ok(data) = rx.try_recv() {
-            //     if let Ok(device_full_info) = b_state.central.as_ref().peripheral(&data).await {
-            //         debug!("Full device info {:?}", device_full_info);
-            //         devices.push(
-            //             device_full_info
-            //                 .properties()
-            //                 .await
-            //                 .unwrap()
-            //                 .unwrap()
-            //                 .local_name
-            //                 .unwrap(),
-            //         );
-            //     }
-            // }
-            //
             let mut events = b_state.central.events().await.unwrap();
             if let Some(event) = events.next().await {
                 debug!(
@@ -112,16 +97,17 @@ impl BlooTui {
                 );
                 if let CentralEvent::DeviceDiscovered(id) = event {
                     if let Ok(device_full_info) = b_state.central.as_ref().peripheral(&id).await {
+                        let device_name = device_full_info
+                            .properties()
+                            .await
+                            .unwrap()
+                            .unwrap()
+                            .local_name
+                            .unwrap();
                         debug!("Full device info {:?}", device_full_info);
-                        devices.push(
-                            device_full_info
-                                .properties()
-                                .await
-                                .unwrap()
-                                .unwrap()
-                                .local_name
-                                .unwrap(),
-                        );
+                        if !devices.contains(&device_name) {
+                            devices.push(device_name);
+                        }
                     }
                 }
             }
