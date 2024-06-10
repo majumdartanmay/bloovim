@@ -63,7 +63,11 @@ impl BlooTui {
             .collect::<Vec<String>>();
 
         let list = List::new(items2)
-            .block(Block::default().title("List").borders(Borders::ALL))
+            .block(
+                Block::default()
+                    .title("Bluetooth devices")
+                    .borders(Borders::ALL),
+            )
             .style(Style::default().fg(Color::White))
             .highlight_style(Style::default().add_modifier(Modifier::ITALIC))
             .highlight_symbol(">>")
