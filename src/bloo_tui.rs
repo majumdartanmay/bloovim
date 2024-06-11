@@ -53,13 +53,8 @@ impl BlooTui {
         Ok(())
     }
 
-    fn render_list(_frame: &mut Frame, devices: &mut [String]) {
-        let items2 = devices
-            .iter()
-            .map(|x| x.to_string())
-            .collect::<Vec<String>>();
-
-        let list = List::new(items2)
+    fn render_list(frame: &mut Frame, devices: &mut [String], state: &mut ListState) {
+        let list = List::new(devices.to_vec())
             .block(
                 Block::default()
                     .title("Bluetooth devices")
@@ -71,7 +66,8 @@ impl BlooTui {
             .repeat_highlight_symbol(true)
             .direction(ListDirection::TopToBottom);
 
-        _frame.render_widget(list, _frame.size());
+        let area: Rect = frame.size();
+        frame.render_stateful_widget(list, area, state);
     }
 
     async fn start_event_loop(
@@ -79,39 +75,42 @@ impl BlooTui {
         devices: &mut Vec<String>,
         b_state: &BState,
     ) -> Result<()> {
+        let mut state = ListState::default().with_selected(Some(0));
         loop {
             // draw UI
             self.terminal.draw(|frame: &mut Frame| {
-                Self::render_list(frame, &mut devices.to_vec());
+                Self::render_list(frame, &mut devices.to_vec(), &mut state);
             })?;
 
             let mut events = b_state.central.events().await.unwrap();
-            if let Some(event) = events.next().await {
-                debug!(
-                    "Some bluetooth event has occured. Event information{:?} ",
-                    event
-                );
-                if let CentralEvent::DeviceDiscovered(id) = event {
-                    if let Ok(device_full_info) = b_state.central.as_ref().peripheral(&id).await {
-                        let device_name = device_full_info
-                            .properties()
-                            .await
-                            .unwrap()
-                            .unwrap()
-                            .local_name
-                            .unwrap();
+
+            if let Some(CentralEvent::DeviceDiscovered(id)) = events.next().await {
+                if let Ok(device_full_info) = b_state.central.as_ref().peripheral(&id).await {
+                    let device_name = device_full_info
+                        .properties()
+                        .await
+                        .unwrap()
+                        .unwrap()
+                        .local_name
+                        .unwrap();
+                    if !devices.contains(&device_name) {
                         debug!("Full device info {:?}", device_full_info);
-                        if !devices.contains(&device_name) {
-                            devices.push(device_name);
-                        }
+                        devices.push(device_name);
                     }
                 }
             }
 
             if event::poll(std::time::Duration::from_millis(16))? {
                 if let event::Event::Key(key) = event::read()? {
-                    if key.kind == KeyEventKind::Press && key.code == KeyCode::Char('q') {
-                        break;
+                    if key.kind == KeyEventKind::Press {
+                        if key.code == KeyCode::Char('q') {
+                            break;
+                        } else if key.code == KeyCode::Enter {
+                            debug!(
+                                "Enter has been pressed. Current item pressed : {}",
+                                state.selected().unwrap()
+                            )
+                        }
                     }
                 }
             }

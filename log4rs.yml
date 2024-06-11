@@ -19,20 +19,15 @@ root:
     - requests
 
 loggers:
-  bloo_controller:
-    level: debug
-    appenders:
-      - requests
-    additive: false
 
   bloo_tui:
-    level: debug
+    level: info
     appenders:
       - requests
     additive: false
 
   main:
-    level: debug
+    level: info
     appenders:
       - requests
     additive: false
