@@ -3,7 +3,6 @@ use crate::BState;
 use btleplug::api::Central;
 use btleplug::api::CentralEvent;
 use btleplug::api::Peripheral;
-use btleplug::platform::PeripheralId;
 use crossterm::{
     event::{self, KeyCode, KeyEventKind},
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
@@ -16,7 +15,6 @@ use ratatui::widgets::*;
 
 use ratatui::prelude::*;
 use std::io::{stdout, Result};
-use tokio::sync::mpsc;
 
 pub struct BlooTui {
     terminal: Terminal<CrosstermBackend<std::io::Stdout>>,
@@ -31,7 +29,6 @@ impl BlooTui {
 
     pub async fn start_tui(
         &mut self,
-        rx: &mut mpsc::Receiver<PeripheralId>,
         devices_arc: &mut Vec<String>,
         b_state: &BState,
     ) -> Result<()> {
@@ -42,7 +39,7 @@ impl BlooTui {
 
         self.terminal.clear()?;
 
-        self.start_event_loop(devices_arc, rx, b_state).await?;
+        self.start_event_loop(devices_arc, b_state).await?;
         self.stop_tui()?;
 
         Ok(())
@@ -80,7 +77,6 @@ impl BlooTui {
     async fn start_event_loop(
         &mut self,
         devices: &mut Vec<String>,
-        rx: &mut mpsc::Receiver<PeripheralId>,
         b_state: &BState,
     ) -> Result<()> {
         loop {
